@@ -33,21 +33,22 @@ class ImgScalrVoodoo
     block_given? ? yield(image) : image
   end
 
-  def resize(width, height, options={})
-    target = guard do
-               Scalr.resize(@src,
-                            Scalr::Method::QUALITY,
-                            Scalr::Mode::FIT_EXACT,
-                            width,
-                            height,
-                            Scalr::OP_ANTIALIAS)
-             end
+  def img_scalr_resize(width, height, options={})
+    method = options[:method]? options[:method] : Scalr::Method::QUALITY
+    mode   = options[:mode]? options[:mode] : Scalr::Mode::FIT_EXACT
+    ops    = options[:ops]? options[:ops] : Scalr::OP_ANTIALIAS
+
+    target = guard { Scalr.resize(@src, method, mode, width, height, ops) }
 
     image = ImgScalrVoodoo.new(target)
 
     block_given? ? yield(image) : image
   rescue NativeException => ne
     raise ArgumentError, ne.message
+  end
+
+  def resize(width, height)
+    img_scalr_resize(width, height)
   end
 
   def cropped_thumbnail(size)

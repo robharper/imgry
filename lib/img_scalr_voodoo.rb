@@ -48,7 +48,8 @@ class ImgScalrVoodoo
   end
 
   def resize(width, height)
-    img_scalr_resize(width, height)
+    image = img_scalr_resize(width, height)
+    block_given? ? yield(image) : image
   end
 
   def cropped_thumbnail(size)

@@ -20,4 +20,5 @@ end
 Imagery = Imgry
 
 require 'imgry/version'
+require 'imgry/geometry'
 require 'imgry/processor'

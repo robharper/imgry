@@ -43,36 +43,8 @@ module Imgry
       end
 
       def resize!(geometry)
-        return if geometry.nil?
-        op = geometry[-1] # Expecting !, >, <, or nothing
-        new_width, new_height = nil, nil
-        ask_width, ask_height = geometry.split('x').map {|x| x.to_i }
-        ask_height ||= 0
-        
-        scale = Proc.new do
-          if ask_width == 0 || ask_width < ask_height
-            new_width, new_height = scale_by_height(ask_height)
-          else
-            new_width, new_height = scale_by_width(ask_width)
-          end
-        end
-
-        case op
-        when '!'
-          new_width, new_height = ask_width.to_i, ask_height.to_i
-        when '>'
-          scale.call if width > ask_width || height > ask_height
-        when '<'
-          scale.call if width < ask_width || height < ask_height
-        else
-          scale.call
-        end
-
-        # In the end, we've determined we don't want to resizie (perhaps due to > or < operations)
-        return if new_width.nil? || new_width.nil?
-
-        # Resize .. do itttttttt
-        @image_ref = @image_ref.resize(new_width, new_height)
+        return if geometry.nil?        
+        @image_ref = @image_ref.resize(*Geometry.scale(width, height, geometry))
       end
 
       def width
@@ -81,10 +53,6 @@ module Imgry
 
       def height
         @image_ref.height
-      end
-
-      def aspect_ratio
-        width.to_f / height.to_f
       end
 
       def to_blob
@@ -114,16 +82,6 @@ module Imgry
         @image_ref = nil
         @src_blob = nil
       end
-
-      private
-
-        def scale_by_width(new_width)
-          [new_width.to_i, (new_width / aspect_ratio).to_i]
-        end
-
-        def scale_by_height(new_height)
-          [(new_height * aspect_ratio).to_i, new_height.to_i]
-        end
 
     end
 

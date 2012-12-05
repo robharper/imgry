@@ -23,21 +23,11 @@ module Imgry
         load_image_blob!
       end
 
-# .......
-      # def resize!(geometry)
-      # end
+      def aspect_ratio
+        width.to_f / height.to_f
+      end
 
-      # def width
-      # end
-
-      # def height
-      # end
-
-      # def to_blob(format=nil)
-      # end
-
-      # def reset!
-      # end
+      # TODO .. add abstract methods.. at least comments..
 
     end
 

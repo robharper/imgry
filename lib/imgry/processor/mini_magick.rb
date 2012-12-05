@@ -15,7 +15,8 @@ module Imgry
         ::MiniMagick.processor = :gm
         ::MiniMagick.timeout = 45
 
-        # Add-ons..
+        # Fix.. this is in mini_magick's github master,
+        # but not in the stable released gem
         ::MiniMagick::Image.class_eval do
           def run_command(command, *args)
             # -ping "efficiently determine image characteristics."

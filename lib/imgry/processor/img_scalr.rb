@@ -1,7 +1,7 @@
 module Imgry
   module Processor
 
-    class ImgScalr < Adapter
+    class ImgScalr < JavaAdapter
 
       def self.load_lib!
         return if @lib_loaded
@@ -30,18 +30,25 @@ module Imgry
       def load_image_blob!
         @img_blob = @img_blob.to_java_bytes if String === @img_blob
 
-        @image_ref = ImageIO.read(ByteArrayInputStream.new(@img_blob))
-        # TODO .. raise if bullshit... InvalidImageError...
-
+        begin
+          @image_ref = ImageIO.read(ByteArrayInputStream.new(@img_blob))
+          # if @image_ref.src.nil?
+            # raise InvalidImageError, "Image is either corrupt or unsupported."
+          # end
+        rescue => ex
+          raise InvalidImageError, ex.message
+        end
       end
 
-      def resize!(width, height)
+      def resize!(geometry)
         options = {}
         method = options[:method] ? options[:method] : Scalr::Method::QUALITY
         mode   = options[:mode] ? options[:mode] : Scalr::Mode::FIT_EXACT
         ops    = options[:ops] ? options[:ops] : Scalr::OP_ANTIALIAS
 
-        @image_ref = Scalr.resize(@image_ref, method, mode, width, height, ops)
+        new_width, new_height = Geometry.scale(width, height, geometry)
+
+        @image_ref = Scalr.resize(@image_ref, method, mode, new_width, new_height, ops)
       end
 
       def width

@@ -1,7 +1,7 @@
 module Imgry
   module Processor
 
-    class ImageVoodoo < Adapter
+    class ImageVoodoo < JavaAdapter
 
       def self.load_lib!
         return if @lib_loaded

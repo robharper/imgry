@@ -37,6 +37,7 @@ module Imgry
 end
 
 %w(
+  java_adapter
   image_voodoo
   img_scalr
   mini_magick

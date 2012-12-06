@@ -2,20 +2,87 @@ module Imgry
   module Processor
 
     class JavaAdapter < Adapter
+      include Java
 
-=begin
-      def supported_write_formats
-        # Typical formats:
-        # [BMP, bmp, jpg, JPG, wbmp, jpeg, png, JPEG, PNG, WBMP, GIF, gif]
-        ::ImageVoodoo::ImageIO.getReaderFormatNames.to_a
+      java_import javax.imageio.ImageIO
+      java_import java.awt.image.BufferedImage
+      java_import java.io.ByteArrayInputStream
+      java_import java.io.ByteArrayOutputStream
+
+      # Turn on OpenGL .. benchmarks show that with or without
+      # GPU performance is improved
+      java.lang.System.setProperty('sun.java2d.opengl', 'true')
+
+      def self.with_bytes(img_blob, format=nil)
+        bytes = img_blob.to_java_bytes if img_blob.is_a?(String)
+        new(ByteArrayInputStream.new(bytes), format)
       end
 
-      def supported_read_formats
-        # Typical formats:
-        # [BMP, bmp, jpg, JPG, wbmp, jpeg, png, JPEG, PNG, WBMP, GIF, gif]
-        ::ImageVoodoo::ImageIO.getWriterFormatNames.to_a
+      def self.from_file(path, format=nil)
+        if !File.readable?(path)
+          raise FileUnreadableError, path.to_s
+        end
+
+        # Use the format based on the file's extension
+        ext = File.extname(path)
+        format = !ext.nil? ? ext[1..-1].downcase : nil
+
+        img_blob = IO.read(path.to_s)
+        with_bytes(img_blob, format)
+
+        # TODO: read the file using Java file io instead..?
+        # input_stream = java.io.FileInputStream.new(java.io.File.new(path.to_s))
       end
-=end
+
+      def self.supported_formats
+        @supported_formats ||= begin
+          # NOTE: assuming read and write formats are the same..
+          # Typical formats: bmp, jpg, wbmp, jpeg, png, gif
+          ImageIO.getReaderFormatNames.to_a.map(&:downcase).uniq
+        end
+      end
+
+      def width
+        @img.width
+      end
+
+      def height
+        @img.height
+      end
+
+      def clean!
+        @img = nil
+        @img_blob = nil
+      end
+
+      def to_blob(format=nil)
+        format ||= @format || DEFAULT_OUTPUT_FORMAT
+
+        if !self.class.supported_formats.include?(format.downcase)
+          raise UnsupportedFormatError, format
+        end
+
+        out = ByteArrayOutputStream.new
+        ImageIO.write(src, format, out)
+        String.from_java_bytes(out.to_byte_array)
+      end
+
+      def save(path)
+        if !File.writable?(File.dirname(path))
+          raise FileUnwritableError, path.to_s
+        end
+
+        ext = File.extname(path)
+        format = !ext.nil? ? ext[1..-1].downcase : nil
+        format ||= DEFAULT_OUTPUT_FORMAT
+
+        if !self.class.supported_formats.include?(format)
+          raise UnsupportedFormatError, format
+        end
+
+        ImageIO.write(src, format.downcase, java.io.File.new(path.to_s))
+        true
+      end
 
     end
 

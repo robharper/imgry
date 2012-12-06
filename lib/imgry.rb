@@ -26,6 +26,12 @@ module Imgry
     @processor_klass = nil
     @processor = processor
   end
+
+
+  class InvalidImageError < StandardError; end
+  class UnsupportedFormatError < StandardError; end
+  class FileUnreadableError < StandardError; end
+  class FileUnwritableError < StandardError; end
 end
 
 Imagery = Imgry

@@ -2,72 +2,33 @@ module Imgry
   module Processor
 
     class ImgScalr < JavaAdapter
+      require 'java/imgscalr-lib-4.2.jar'
+      java_import org.imgscalr.Scalr
 
-      def self.load_lib!
-        return if @lib_loaded
-
-        if RUBY_ENGINE != 'jruby'
-          raise 'The ImgScalr processor is only available on JRuby.'
-        end
-
-        self.class_eval do
-          include Java
-
-          require 'java/imgscalr-lib-4.2.jar'
-
-          java_import javax.imageio.ImageIO
-          java_import org.imgscalr.Scalr
-          java_import java.awt.image.BufferedImage
-          java_import java.io.ByteArrayInputStream
-          java_import java.io.ByteArrayOutputStream
-        end
-
-        @lib_loaded = true
-      end
-
-      #-----
-
-      def load_image_blob!
-        @img_blob = @img_blob.to_java_bytes if String === @img_blob
-
+      def load_image!
         begin
-          @image_ref = ImageIO.read(ByteArrayInputStream.new(@img_blob))
-          # if @image_ref.src.nil?
-            # raise InvalidImageError, "Image is either corrupt or unsupported."
-          # end
+          @img = ImageIO.read(@img_blob)
         rescue => ex
           raise InvalidImageError, ex.message
         end
       end
 
-      def resize!(geometry)
-        options = {}
-        method = options[:method] ? options[:method] : Scalr::Method::QUALITY
-        mode   = options[:mode] ? options[:mode] : Scalr::Mode::FIT_EXACT
-        ops    = options[:ops] ? options[:ops] : Scalr::OP_ANTIALIAS
+      def src
+        @img
+      end
 
+      def resize!(geometry)
         new_width, new_height = Geometry.scale(width, height, geometry)
 
-        @image_ref = Scalr.resize(@image_ref, method, mode, new_width, new_height, ops)
+        @img = Scalr.resize(@img,
+                            Scalr::Method::QUALITY,
+                            Scalr::Mode::FIT_EXACT,
+                            new_width, new_height,
+                            Scalr::OP_ANTIALIAS)
       end
 
-      def width
-        @image_ref.width
-      end
-
-      def height
-        @image_ref.height
-      end
-
-      def to_blob(format=nil)
-        format ||= 'jpg'
-
-        out = ByteArrayOutputStream.new
-        ImageIO.write(@image_ref, format, out)
-        String.from_java_bytes(out.to_byte_array)
-      end
-
-      def clean!
+      def crop!
+        # TODO
       end
 
     end

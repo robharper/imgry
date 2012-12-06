@@ -2,7 +2,7 @@
 
 A Ruby gem for fast image resizing/cropping designed for JRuby with MRI support.
 
-Imgry provides an elegant interface and optimizations to third party libraries: Imgscalr, ImageVoodoo and MiniMagick. The library was designed to work as fast as possible under JRuby, and it does, from what we've seen it outperforms any other JRuby image resizing library, if it doesn't, please show us and let's improve it!
+Imgry provides an elegant interface and optimizations to third party libraries: Imgscalr, ImageVoodoo and MiniMagick. The library was designed to work as fast as possible under JRuby, and it does, from what we've seen it outperforms any other JRuby image resizing libraries, if it doesn't, please show us and let's improve it!
 
 It's also convienient for teams that work between MRI and JRuby, working seamlessly across development/production app environments.
 

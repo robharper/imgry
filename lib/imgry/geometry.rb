@@ -3,6 +3,8 @@ module Imgry
     extend self
 
     def scale(orig_width, orig_height, geometry)
+      return [orig_width, orig_height] if geometry.blank?
+
       op = geometry[-1] # Expecting !, >, <, or nothing
       new_width, new_height = nil, nil
       ask_width, ask_height = geometry.split('x').map {|x| x.to_i }

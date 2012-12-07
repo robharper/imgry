@@ -18,6 +18,7 @@ module Imgry
       end
 
       def resize!(geometry)
+        return if geometry.nil?
         new_width, new_height = Geometry.scale(width, height, geometry)
 
         @img = Scalr.resize(@img,

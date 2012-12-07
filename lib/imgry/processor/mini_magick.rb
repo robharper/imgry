@@ -31,7 +31,8 @@ module Imgry
       end
 
       def resize!(geometry)
-        @img.resize(geometry) if !geometry.nil?
+        return if geometry.nil?
+        @img.resize(geometry)
         nil
       end
 

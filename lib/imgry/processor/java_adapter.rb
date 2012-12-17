@@ -15,7 +15,11 @@ module Imgry
 
       def self.with_bytes(img_blob, format=nil)
         bytes = img_blob.to_java_bytes if img_blob.is_a?(String)
-        new(ByteArrayInputStream.new(bytes), format)
+        image_input_stream = ImageIO.create_image_input_stream(ByteArrayInputStream.new(bytes))
+
+        out_format = detect_format(image_input_stream)
+
+        new(image_input_stream, out_format)
       end
 
       def self.from_file(path, format=nil)
@@ -34,12 +38,24 @@ module Imgry
         # input_stream = java.io.FileInputStream.new(java.io.File.new(path.to_s))
       end
 
+      def self.detect_format(image_input_stream)
+        reader = ImageIO.get_image_readers(image_input_stream).first
+
+        return DEFAULT_OUTPUT_FORMAT if reader.nil?
+
+        reader.format_name.downcase
+      end
+
       def self.supported_formats
         @supported_formats ||= begin
           # NOTE: assuming read and write formats are the same..
           # Typical formats: bmp, jpg, wbmp, jpeg, png, gif
           ImageIO.getReaderFormatNames.to_a.map(&:downcase).uniq
         end
+      end
+
+      def format
+        @format
       end
 
       def width

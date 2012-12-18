@@ -64,6 +64,19 @@ module Imgry
         @img_blob = nil
       end
 
+      def crop_geometry(geometry)
+        # no gravity support yet, so all offsets should be > 0
+        width, height, offset_x, offset_y, flag = Geometry.from_s(geometry)
+
+        offset_x = 0 if offset_x > self.width || offset_x < 0
+        offset_y = 0 if offset_y > self.height || offset_y < 0
+
+        width  = self.width - offset_x if width + offset_x > self.width
+        height = self.height - offset_y if height + offset_y > self.height
+
+        [width, height, offset_x, offset_y, flag]
+      end
+
       def to_blob(format=nil)
         format ||= @format
 

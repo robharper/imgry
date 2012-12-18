@@ -16,12 +16,14 @@ module Imgry
       end
 
       def resize!(geometry)
-        return if geometry.nil?        
+        return if geometry.nil?
         @img = @img.resize(*Geometry.scale(width, height, geometry))
       end
 
-      def crop!
-        # TODO
+      def crop!(geometry)
+        width, height, offset_x, offset_y, flag = crop_geometry(geometry)
+
+        @img = @img.with_crop(offset_x, offset_y, offset_x + width, offset_y + height)
       end
 
     end

@@ -29,9 +29,12 @@ module Imgry
                             Scalr::OP_ANTIALIAS)
       end
 
-      def crop!
-        # TODO
+      def crop!(geometry)
+        width, height, offset_x, offset_y, flag = crop_geometry(geometry)
+
+        @img = Scalr.crop(@img, offset_x, offset_y, width, height)
       end
+
 
     end
 

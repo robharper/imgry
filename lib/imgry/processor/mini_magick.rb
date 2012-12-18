@@ -29,6 +29,12 @@ module Imgry
         nil
       end
 
+      def crop!(geometry)
+        return if geometry.nil?
+        @img.crop(geometry)
+        nil
+      end
+
       def width
         @img['width']
       end

@@ -23,6 +23,25 @@ if RUBY_ENGINE == 'jruby'
         new_img_blob.length.should == 32159
       end
 
+      it "crops an image" do
+        img = Imgry::Processor::ImageVoodoo.with_bytes(img_data)
+
+        img.width.should == 1024
+        img.height.should == 764
+
+        img.crop!("300x200+100+300")
+        img.width.should == 300
+        img.height.should == 200
+      end
+
+      it "handles offsets properly when cropping an image" do
+        img = Imgry::Processor::ImageVoodoo.with_bytes(img_data)
+
+        img.crop!("300x200+800+600")
+        img.width.should == 224
+        img.height.should == 164
+      end
+
     end
 
     context "image format" do

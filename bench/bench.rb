@@ -16,7 +16,7 @@ IMAGE_SIZES = [
 files = [image_file]
 data = IO.read(image_file)
 
-puts "Resizing image of #{data.bytesize} bytes #{max} times"
+puts "Resizing image of #{data.bytesize} bytes #{max*IMAGE_SIZES.length} times"
 
 Benchmark::bm(20) do |x|
 

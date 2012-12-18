@@ -3,23 +3,16 @@ module Imgry
 
     class MiniMagick < Adapter
 
-      def self.with_bytes(img_blob, format=nil)
-        new(img_blob, format)
+      def self.with_bytes(img_blob)
+        new(img_blob)
       end
 
-      def self.from_file(path, format=nil)
+      def self.from_file(path)
         if !File.readable?(path)
           raise FileUnreadableError, path.to_s
         end
 
-        new(IO.read(path), format)
-      end
-
-      def self.supported_formats
-        # Hardcoded list of supported formats for validity checking..
-        # Image/GraphicsMagick have a much more extensive list.
-        # Submit an issue if this is a problem.
-        ['bmp', 'jpg', 'wbmp', 'jpeg', 'gif', 'png', 'png32', 'png24', 'png8', 'tiff']
+        new(IO.read(path))
       end
 
       def load_image!
@@ -45,10 +38,17 @@ module Imgry
       end
 
       def format
-        @img['format']
+        format = @img['format']
+
+        # Normalize..
+        if !format.nil?
+          format.downcase!
+          format == 'jpeg' ? 'jpg' : format
+        end
       end
 
-      def to_blob
+      def to_blob(format=nil)
+        # TODO: support other output format
         @img.to_blob
       end
 
@@ -56,9 +56,7 @@ module Imgry
         if !File.writable?(File.dirname(path))
           raise FileUnwritableError, path.to_s
         end
-        if !self.class.supported_formats.include?(format.downcase)
-          raise UnsupportedFormatError, format
-        end
+        # TODO: error checking on write
         @img.write(path.to_s)
       end
 

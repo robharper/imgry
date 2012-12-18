@@ -2,22 +2,20 @@ module Imgry
   module Processor
 
     class Adapter
-      DEFAULT_OUTPUT_FORMAT = 'jpg'
-
       def self.load_lib!
       end
 
-      def self.with_bytes(img_bytes, format=nil)
+      def self.with_bytes(img_bytes)
         # Abstract
       end
 
-      def self.from_file(path, format=nil)
+      def self.from_file(path)
         # Abstract
       end
 
-      def initialize(img_blob, format=nil)
+      def initialize(img_blob)
         @img_blob = img_blob
-        @format = format
+        @format = nil
         @img = nil
         load_image!
       end

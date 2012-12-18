@@ -4,6 +4,7 @@ module Imgry
     class ImageVoodoo < JavaAdapter
       def load_image!
         begin
+          detect_image_format!(@img_blob)
           @img = ::ImageVoodoo.new(ImageIO.read(@img_blob))
         rescue => ex
           raise InvalidImageError, ex.message

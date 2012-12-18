@@ -3,12 +3,12 @@ module Imgry
 
   attr_accessor :processor
 
-  def with_bytes(img_blob, format=nil)
-    processor_klass.with_bytes(img_blob, format)
+  def with_bytes(img_blob)
+    processor_klass.with_bytes(img_blob)
   end
 
-  def from_file(img_blob, format=nil)
-    processor_klass.from_file(img_blob, format)
+  def from_file(path)
+    processor_klass.from_file(path)
   end
 
   def processor_klass

@@ -13,37 +13,30 @@ module Imgry
       # GPU performance is improved
       java.lang.System.setProperty('sun.java2d.opengl', 'true')
 
-      def self.with_bytes(img_blob, format=nil)
+      def self.with_bytes(img_blob)
         bytes = img_blob.to_java_bytes if img_blob.is_a?(String)
         image_input_stream = ImageIO.create_image_input_stream(ByteArrayInputStream.new(bytes))
 
-        out_format = detect_format(image_input_stream)
-
-        new(image_input_stream, out_format)
+        new(image_input_stream)
       end
 
-      def self.from_file(path, format=nil)
+      def self.from_file(path)
         if !File.readable?(path)
           raise FileUnreadableError, path.to_s
         end
 
-        # Use the format based on the file's extension
-        ext = File.extname(path)
-        format = !ext.nil? ? ext[1..-1].downcase : nil
-
         img_blob = IO.read(path.to_s)
-        with_bytes(img_blob, format)
+        with_bytes(img_blob)
 
         # TODO: read the file using Java file io instead..?
         # input_stream = java.io.FileInputStream.new(java.io.File.new(path.to_s))
       end
 
-      def self.detect_format(image_input_stream)
-        reader = ImageIO.get_image_readers(image_input_stream).first
-
-        return DEFAULT_OUTPUT_FORMAT if reader.nil?
-
-        reader.format_name.downcase
+      def detect_image_format!(image_input_stream)
+        if (reader = ImageIO.get_image_readers(image_input_stream).first)
+          @format = reader.format_name.downcase
+          @format = 'jpg' if @format == 'jpeg' # prefer this way..
+        end
       end
 
       def self.supported_formats
@@ -72,7 +65,7 @@ module Imgry
       end
 
       def to_blob(format=nil)
-        format ||= @format || DEFAULT_OUTPUT_FORMAT
+        format ||= @format
 
         if !self.class.supported_formats.include?(format.downcase)
           raise UnsupportedFormatError, format
@@ -89,8 +82,7 @@ module Imgry
         end
 
         ext = File.extname(path)
-        format = !ext.nil? ? ext[1..-1].downcase : nil
-        format ||= DEFAULT_OUTPUT_FORMAT
+        format = !ext.nil? ? ext[1..-1].downcase : @format
 
         if !self.class.supported_formats.include?(format)
           raise UnsupportedFormatError, format

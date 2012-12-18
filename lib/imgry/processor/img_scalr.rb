@@ -7,6 +7,7 @@ module Imgry
 
       def load_image!
         begin
+          detect_image_format!(@img_blob)
           @img = ImageIO.read(@img_blob)
         rescue => ex
           raise InvalidImageError, ex.message

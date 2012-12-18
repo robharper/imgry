@@ -28,13 +28,13 @@ if RUBY_ENGINE == 'jruby'
     context "image format" do
 
       it "corrects passed in format" do
-        img = Imgry::Processor::ImageVoodoo.with_bytes(img_data, 'gif')
-        img.format.should == 'jpeg'
+        img = Imgry::Processor::ImageVoodoo.with_bytes(img_data)
+        img.format.should == 'jpg'
       end
 
       it "knows how to detect jpg files" do
         img = Imgry::Processor::ImageVoodoo.with_bytes(img_data)
-        img.format.should == 'jpeg'
+        img.format.should == 'jpg'
       end
 
       it "knows how to detect png files" do

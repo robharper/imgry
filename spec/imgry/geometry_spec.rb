@@ -33,4 +33,71 @@ describe Imgry::Geometry do
     size.should == [600, 800]
   end
 
+  context "#from_s" do
+    it 'handles geometry format: WxH+X+Y>' do
+      geometry_str = "200x300+10+20!"
+      width, height, offset_x, offset_y, flag = Imgry::Geometry.from_s(geometry_str)
+
+      width.should    == 200
+      height.should   == 300
+      offset_x.should == 10
+      offset_y.should == 20
+      flag.should     == '!'
+    end
+
+    it 'handles geometry format: Wx>' do
+      geometry_str = "200x"
+      width, height, offset_x, offset_y, flag = Imgry::Geometry.from_s(geometry_str)
+
+      width.should    == 200
+      height.should   == 0
+      offset_x.should == 0
+      offset_y.should == 0
+      flag.should     == ''
+    end
+
+    it 'handles geometry format: WxH>' do
+      geometry_str = "200x300"
+      width, height, offset_x, offset_y, flag = Imgry::Geometry.from_s(geometry_str)
+
+      width.should    == 200
+      height.should   == 300
+      offset_x.should == 0
+      offset_y.should == 0
+      flag.should     == ''
+    end
+
+    it 'handles geometry format: WxH>' do
+      geometry_str = "200x300>"
+      width, height, offset_x, offset_y, flag = Imgry::Geometry.from_s(geometry_str)
+
+      width.should    == 200
+      height.should   == 300
+      offset_x.should == 0
+      offset_y.should == 0
+      flag.should     == '>'
+    end
+
+    it 'handles geometry format: WxH+X' do
+      geometry_str = "200x300+10"
+      width, height, offset_x, offset_y, flag = Imgry::Geometry.from_s(geometry_str)
+
+      width.should    == 200
+      height.should   == 300
+      offset_x.should == 10
+      offset_y.should == 0
+      flag.should     == ''
+    end
+
+    it 'handles geometry format: WxH+X>' do
+      geometry_str = "200x300+10>"
+      width, height, offset_x, offset_y, flag = Imgry::Geometry.from_s(geometry_str)
+
+      width.should    == 200
+      height.should   == 300
+      offset_x.should == 10
+      offset_y.should == 0
+      flag.should     == '>'
+    end
+  end
 end

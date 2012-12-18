@@ -4,13 +4,12 @@ module Imgry
 
     def scale(orig_width, orig_height, geometry)
       # TODO: basic verification of geometry syntax
-
-      op = geometry[-1] # Expecting !, >, <, or nothing
       new_width, new_height = nil, nil
-      ask_width, ask_height = geometry.split('x').map {|x| x.to_i }
+      ask_width, ask_height, _, _, op = from_s(geometry)
+
       ask_height ||= 0
       aspect_ratio = orig_width.to_f / orig_height.to_f
-      
+
       scale = Proc.new do
         if ask_width == 0 || ask_width < ask_height
           new_width, new_height = scale_by_height(ask_height, aspect_ratio)
@@ -41,5 +40,25 @@ module Imgry
       [(new_height * aspect_ratio).to_i, new_height.to_i]
     end
 
+    # borrowed from RMagick
+    W = /(\d+\.\d+%?)|(\d*%?)/
+    H = W
+    X = /(?:([-+]\d+))?/
+    Y = X
+    REGEXP = /\A#{W}x?#{H}#{X}#{Y}([!<>@\^]?)\Z/
+
+    def from_s(str)
+      m = REGEXP.match(str)
+      if m
+          width  = (m[1] || m[2]).to_f
+          height = (m[3] || m[4]).to_f
+          x      = m[5].to_i
+          y      = m[6].to_i
+          flag   = m[7]
+      else
+          raise ArgumentError, "invalid geometry format"
+      end
+      [width, height, x, y, flag]
+    end
   end
 end

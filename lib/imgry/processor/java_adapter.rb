@@ -15,9 +15,7 @@ module Imgry
 
       def self.with_bytes(img_blob)
         bytes = img_blob.to_java_bytes if img_blob.is_a?(String)
-        image_input_stream = ImageIO.create_image_input_stream(ByteArrayInputStream.new(bytes))
-
-        new(image_input_stream)
+        new(bytes)
       end
 
       def self.from_file(path)
@@ -33,6 +31,7 @@ module Imgry
       end
 
       def detect_image_format!(image_input_stream)
+        @format = nil # reset..
         if (reader = ImageIO.get_image_readers(image_input_stream).first)
           @format = reader.format_name.downcase
           @format = 'jpg' if @format == 'jpeg' # prefer this way..

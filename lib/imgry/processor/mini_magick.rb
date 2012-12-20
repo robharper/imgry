@@ -17,6 +17,7 @@ module Imgry
 
       def load_image!
         begin
+          @format = nil
           @img = ::MiniMagick::Image.read(@img_blob)
         rescue ::MiniMagick::Invalid => ex
           raise InvalidImageError, ex.message
@@ -44,12 +45,13 @@ module Imgry
       end
 
       def format
-        format = @img['format']
-
-        # Normalize..
-        if !format.nil?
-          format.downcase!
-          format == 'jpeg' ? 'jpg' : format
+        @format ||= begin
+          format = @img['format']
+          if !format.nil?
+            # Normalize..
+            format.downcase!
+            format == 'jpeg' ? 'jpg' : format
+          end
         end
       end
 

@@ -13,11 +13,21 @@ module Imgry
         # Abstract
       end
 
+      attr_accessor :img, :img_blob, :format
+
       def initialize(img_blob)
         @img_blob = img_blob
         @format = nil
         @img = nil
         load_image!
+      end
+
+      def inspect
+        if @format
+          "#<#{self.class} format: #{@format}>"
+        else
+          "#<#{self.class}>"
+        end
       end
 
       def load_image!
@@ -27,8 +37,6 @@ module Imgry
       def aspect_ratio
         width.to_f / height.to_f
       end
-
-      # TODO .. add abstract methods.. at least comments..
 
     end
 

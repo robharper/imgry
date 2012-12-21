@@ -27,11 +27,16 @@ module Imgry
     @processor = processor
   end
 
+  class Error < StandardError
+    def initialize(msg)
+      super("#{self.class} #{msg}")
+    end
+  end
 
-  class InvalidImageError < StandardError; end
-  class UnsupportedFormatError < StandardError; end
-  class FileUnreadableError < StandardError; end
-  class FileUnwritableError < StandardError; end
+  class InvalidImageError < Error; end
+  class UnsupportedFormatError < Error; end
+  class FileUnreadableError < Error; end
+  class FileUnwritableError < Error; end
 end
 
 Imagery = Imgry

@@ -14,8 +14,8 @@ module Imgry
       java.lang.System.setProperty('sun.java2d.opengl', 'true')
 
       def self.with_bytes(img_blob)
-        bytes = img_blob.to_java_bytes if img_blob.is_a?(String)
-        new(bytes)
+        img_blob = img_blob.to_java_bytes if img_blob.is_a?(String)
+        new(img_blob)
       end
 
       def self.from_file(path)

@@ -32,10 +32,12 @@ module Imgry
 
       def detect_image_format!(image_input_stream)
         @format = nil # reset..
-        if (reader = ImageIO.get_image_readers(image_input_stream).first)
-          @format = reader.format_name.downcase
-          @format = 'jpg' if @format == 'jpeg' # prefer this way..
-        end
+
+        reader = ImageIO.get_image_readers(image_input_stream).first
+        raise UnsupportedFormatError if reader.nil?
+
+        @format = reader.format_name.downcase
+        @format = 'jpg' if @format == 'jpeg' # prefer this way..
       end
 
       def self.supported_formats

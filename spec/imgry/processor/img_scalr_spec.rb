@@ -5,6 +5,14 @@ if RUBY_ENGINE == 'jruby'
 
     let (:img_data) { IO.read(SPEC_ROOT.join('support/335is.jpg')) }
     let (:transparent_img_data) { IO.read(SPEC_ROOT.join('support/transparent_background.png')) }
+    let (:broken_img_data) { IO.read(SPEC_ROOT.join('support/invalid_image.gif')) }
+
+    context "broken_image_blob_data" do
+      it "raises exception" do
+        lambda { Imgry::Processor::ImgScalr.with_bytes(broken_img_data) }
+          .should raise_error(Imgry::InvalidImageError)
+      end
+    end
 
     context "a pretty picture" do
 

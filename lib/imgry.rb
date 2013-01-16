@@ -28,8 +28,9 @@ module Imgry
   end
 
   class Error < StandardError
-    def initialize(msg)
-      super("#{self.class} #{msg}")
+    def initialize(msg=nil)
+      msg ||= "unspecified"
+      super("#{self.class}: #{msg}")
       # TODO... we can parse this out to be cleaner.. human readable
       # .. or we add the messages to a constant for each thing or something..
       

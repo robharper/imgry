@@ -30,6 +30,12 @@ describe Imgry do
       File.exists?(tmpfile).should == true
       File.unlink(tmpfile)
     end
+
+    it "accepts bad data" do
+      expect { Imgry.with_bytes("") }.to raise_error(Imgry::InvalidImageError)
+      expect { Imgry.with_bytes(nil) }.to raise_error(Imgry::InvalidImageError)
+      expect { Imgry.with_bytes("fsadfasf") }.to raise_error(Imgry::InvalidImageError)
+    end
     
   end
 

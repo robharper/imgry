@@ -10,13 +10,15 @@ module Imgry
       ask_height ||= 0
       aspect_ratio = orig_width.to_f / orig_height.to_f
 
-      scale = Proc.new do
+      scale = Proc.new do |ask_is_maximum = true|
         ask_aspect_ratio = ask_width.to_f / ask_height.to_f
-        if ask_width == 0 || (ask_height != 0 && ask_aspect_ratio > aspect_ratio)
-          # Requested wider aspect, fill height, calculate width
+        # Fill requested height if result should cover narrower aspect or should be contained within wider aspect
+        fill_height = (ask_is_maximum && ask_aspect_ratio > aspect_ratio) || (!ask_is_maximum && ask_aspect_ratio < aspect_ratio)
+        if ask_width == 0 || (ask_height != 0 && fill_height)
+          # Fill height, calculate width
           new_width, new_height = scale_by_height(ask_height, aspect_ratio)
         else
-          # Requested taller aspect, fill width, calculate height
+          # Fill width, calculate height
           new_width, new_height = scale_by_width(ask_width, aspect_ratio)
         end
       end
@@ -24,6 +26,8 @@ module Imgry
       case op
       when '!'
         new_width, new_height = ask_width.to_i, ask_height.to_i
+      when '^'
+        scale.call(false)
       when '>'
         scale.call if orig_width > ask_width || orig_height > ask_height
       when '<'

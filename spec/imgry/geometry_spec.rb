@@ -49,6 +49,22 @@ describe Imgry::Geometry do
     size.should == [450, 600]
   end
 
+  it 'covers minimum specified dimensions with aspect ratio maintained when image aspect > 1' do
+    size = Imgry::Geometry.scale(1024, 768, "100x600^")
+    size.should == [800, 600]
+
+    size = Imgry::Geometry.scale(1024, 768, "600x100^")
+    size.should == [600, 450]
+  end
+
+  it 'covers minimum specified dimensions with aspect ratio maintained when image aspect < 1' do
+    size = Imgry::Geometry.scale(768, 1024, "100x600^")
+    size.should == [450, 600]
+
+    size = Imgry::Geometry.scale(768, 1024, "600x100^")
+    size.should == [600, 800]
+  end
+
   context "#from_s" do
     it 'handles geometry format: WxH+X+Y>' do
       geometry_str = "200x300+10+20!"

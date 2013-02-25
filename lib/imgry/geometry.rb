@@ -11,9 +11,12 @@ module Imgry
       aspect_ratio = orig_width.to_f / orig_height.to_f
 
       scale = Proc.new do
-        if ask_width == 0 || ask_width < ask_height
+        ask_aspect_ratio = ask_width.to_f / ask_height.to_f
+        if ask_width == 0 || (ask_height != 0 && ask_aspect_ratio > aspect_ratio)
+          # Requested wider aspect, fill height, calculate width
           new_width, new_height = scale_by_height(ask_height, aspect_ratio)
         else
+          # Requested taller aspect, fill width, calculate height
           new_width, new_height = scale_by_width(ask_width, aspect_ratio)
         end
       end
@@ -60,6 +63,6 @@ module Imgry
       end
       [width, height, x, y, flag]
     end
-    
+
   end
 end

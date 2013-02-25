@@ -17,6 +17,22 @@ describe Imgry::Geometry do
     size.should == [400, 300]
   end
 
+  it 'fits given maximum dimensions with aspect ratio maintained when image aspect > 1' do
+    size = Imgry::Geometry.scale(1024, 768, "300x600")
+    size.should == [300, 225]
+
+    size = Imgry::Geometry.scale(1024, 768, "600x300")
+    size.should == [400, 300]
+  end
+
+  it 'fits given maximum dimensions with aspect ratio maintained when image aspect < 1' do
+    size = Imgry::Geometry.scale(768, 1024, "300x600")
+    size.should == [300, 400]
+
+    size = Imgry::Geometry.scale(768, 1024, "600x300")
+    size.should == [225, 300]
+  end
+
   it 'shrinks to a size when dimensions are larger then corresponding width/height' do
     size = Imgry::Geometry.scale(1024, 768, "600x600>")
     size.should == [600, 450]
@@ -30,7 +46,7 @@ describe Imgry::Geometry do
     size.should == [1024, 768]
 
     size = Imgry::Geometry.scale(300, 400, "600x600<")
-    size.should == [600, 800]
+    size.should == [450, 600]
   end
 
   context "#from_s" do
